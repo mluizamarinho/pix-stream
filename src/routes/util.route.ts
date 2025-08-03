@@ -1,11 +1,9 @@
 import { Router } from 'express';
-import { startStream } from '../controllers/pix.controller';
 import { requisicaoPix } from '../controllers/util.controller';
 
 
 const router = Router();
 
 router.post('/msgs/:ispb/:number', requisicaoPix);
-router.get('/:ispb/stream/start', startStream);
 
 export default router;
