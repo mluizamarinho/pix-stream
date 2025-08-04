@@ -1,28 +1,40 @@
-
 import { v4 as uuidv4 } from 'uuid';
-import { pixMessages } from '../mock-pix';
-
-interface PixMessage {
-  id: string;
-  ispbRecebedor: string;
-  valor: number;
-  txId: string;
-}
+import { criarStream, buscarMensagensPix, buscarStreamPorId, atualizarProgressoStream } from '../models/mensagemPix.model';
 
 export class PixService {
-  private streams = new Map<string, string[]>(); 
-
-  getInitialMessages(ispb: string, multiple: boolean) {
-    const mensagens = pixMessages.filter(msg => msg.ispbRecebedor === ispb);
-
-    const selected = multiple ? mensagens.slice(0, 10) : mensagens.slice(0, 1);
+  async iniciarStream(ispb: string, multiple: boolean) {
     const interactionId = uuidv4();
+    await criarStream(interactionId, ispb);
 
-    this.streams.set(interactionId, selected.map(msg => msg.id));
+    const mensagens = await buscarMensagensPix(ispb, 0, multiple ? 10 : 1);
+
+    if (mensagens.length > 0) {
+      const lastId = mensagens[mensagens.length - 1].id;
+      await atualizarProgressoStream(interactionId, ispb, lastId);
+    }
 
     return {
-      messages: selected,
-      pullNext: `/api/pix/${ispb}/stream/${interactionId}`
+      interactionId,
+      mensagens,
+    };
+  }
+
+  async continuarStream(ispb: string, interactionId: string, multiple: boolean) {
+    const stream = await buscarStreamPorId(interactionId, ispb);
+    if (!stream) {
+      throw new Error('Stream não encontrada');
+    }
+
+    const mensagens = await buscarMensagensPix(ispb, stream.last_read_id, multiple ? 10 : 1);
+
+    if (mensagens.length > 0) {
+      const lastId = mensagens[mensagens.length - 1].id;
+      await atualizarProgressoStream(interactionId, ispb, lastId);
+    }
+
+    return {
+      interactionId,
+      mensagens,
     };
   }
 }
