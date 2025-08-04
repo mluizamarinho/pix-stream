@@ -42,3 +42,15 @@ export async function continueStream(req: Request, res: Response) {
     return res.status(500).json({ error: 'Erro ao continuar stream' });
   }
 }
+
+export const deleteStream = async (req: Request, res: Response) => {
+  const { ispb, interactionId } = req.params;
+
+  try {
+    await pixService.encerrarStream(ispb, interactionId);
+    res.status(204).send(); 
+  } catch (error) {
+    console.error('Erro ao encerrar stream:', error);
+    res.status(500).json({ error: 'Erro interno ao encerrar o stream' });
+  }
+};

@@ -1,7 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
-import { criarStream, buscarMensagensPix, buscarStreamPorId, atualizarProgressoStream } from '../models/mensagemPix.model';
+import { criarStream, buscarMensagensPix, buscarStreamPorId, atualizarProgressoStream, deletarStream } from '../models/mensagemPix.model';
 
 export class PixService {
+
   async iniciarStream(ispb: string, multiple: boolean) {
     const interactionId = uuidv4();
     await criarStream(interactionId, ispb);
@@ -36,5 +37,9 @@ export class PixService {
       interactionId,
       mensagens,
     };
+  }
+
+  async encerrarStream(ispb: string, interactionId: string) {
+    await deletarStream(interactionId, ispb);
   }
 }

@@ -59,3 +59,10 @@ export async function buscarMensagensPix(ispb: string, lastReadId: number, limit
   );
   return result.rows;
 }
+
+export async function deletarStream(interactionId: string, ispb: string) {
+  await pool.query(
+    'DELETE FROM pix_streams WHERE interaction_id = $1 AND ispb = $2',
+    [interactionId, ispb]
+  );
+}
