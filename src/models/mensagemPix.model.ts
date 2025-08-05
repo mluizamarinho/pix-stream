@@ -1,31 +1,34 @@
 import { pool } from '../config/pool.db';
 import { MensagemPix } from '../schemas/mensagemPix.schema';
 
+import { prisma } from '../lib/prisma';
+
 export async function insereMensagemPix(mensagem: MensagemPix) {
-  const query = `
-    INSERT INTO mensagens_pix (
-      endToEndId,
-      valor,
-      pagador,
-      recebedor,
-      campoLivre,
-      txId,
-      dataHoraPagamento
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7)
-  `;
+  await prisma.mensagemPix.create({
+    data: {
+      endToEndId: mensagem.endToEndId,
+      valor: mensagem.valor,
+      txId: mensagem.txId,
+      dataHoraPagamento: new Date(mensagem.dataHoraPagamento),
+      campoLivre: mensagem.campoLivre,
 
-  const values = [
-    mensagem.endToEndId,
-    mensagem.valor,
-    JSON.stringify(mensagem.pagador),
-    JSON.stringify(mensagem.recebedor),
-    mensagem.campoLivre,
-    mensagem.txId,
-    mensagem.dataHoraPagamento,
-  ];
+      pagadorNome: mensagem.pagador.nome,
+      pagadorCpfCnpj: mensagem.pagador.cpfCnpj,
+      pagadorIspb: mensagem.pagador.ispb,
+      pagadorAgencia: mensagem.pagador.agencia,
+      pagadorConta: mensagem.pagador.contaTransacional,
+      pagadorTipoConta: mensagem.pagador.tipoConta,
 
-  await pool.query(query, values);
+      recebedorNome: mensagem.recebedor.nome,
+      recebedorCpfCnpj: mensagem.recebedor.cpfCnpj,
+      recebedorIspb: mensagem.recebedor.ispb,
+      recebedorAgencia: mensagem.recebedor.agencia,
+      recebedorConta: mensagem.recebedor.contaTransacional,
+      recebedorTipoConta: mensagem.recebedor.tipoConta,
+    }
+  });
 }
+
 
 export async function criarStream(interactionId: string, ispb: string) {
   await pool.query(

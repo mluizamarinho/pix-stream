@@ -1,6 +1,6 @@
 // src/controllers/util.controller.ts
 import { Request, Response } from 'express';
-import { generaEInserePixFakeInfo } from '../services/util.service';
+import { geraEInserePixFakeInfo } from '../services/util.service';
 
 export const requisicaoPix = async (req: Request, res: Response) => {
   const { ispb, number } = req.params;
@@ -11,7 +11,7 @@ export const requisicaoPix = async (req: Request, res: Response) => {
   }
 
   try {
-    await generaEInserePixFakeInfo(ispb, num);
+    await geraEInserePixFakeInfo(ispb, num);
     res.status(201).json({ message: `${num} mensagens inseridas para o ISPB ${ispb}` });
   } catch (err) {
     console.error(err);
