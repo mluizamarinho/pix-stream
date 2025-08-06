@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-console.log("Iniciando app...");
+console.log("Subindo aplicação Pix Stream...");
 
 app.use('/api/pix', pixRoutes);
 app.use('/api/util', utilRoutes)
