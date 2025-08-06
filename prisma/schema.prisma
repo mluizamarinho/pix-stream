@@ -13,7 +13,6 @@ model MensagemPix {
   valor              Float
   pagadorNome        String
   pagadorCpfCnpj     String
-  pagadorIspb        String
   pagadorAgencia     String
   pagadorConta       String
   pagadorTipoConta   String
@@ -32,10 +31,10 @@ model MensagemPix {
 }
 
 model PixStream {
-  id             String         @id @default(uuid())
-  interactionId  String         @unique
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id             String   @id @default(uuid())
+  interactionId  String
+  ispb           String
+  lastReadId     String
 
-  mensagens      MensagemPix[] 
+  mensagens     MensagemPix[]
 }

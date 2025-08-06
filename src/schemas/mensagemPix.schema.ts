@@ -1,6 +1,6 @@
 export type TipoConta = 'CACC' | 'SVGS'; // Conta Corrente ou Poupança
 
-export interface PessoaPix {
+export interface RecebedorPix {
   nome: string;
   cpfCnpj: string;
   ispb: string;
@@ -9,11 +9,20 @@ export interface PessoaPix {
   tipoConta: TipoConta;
 }
 
+export interface PagadorPix {
+  nome: string;
+  cpfCnpj: string;
+  agencia: string;
+  contaTransacional: string;
+  tipoConta: TipoConta;
+}
+
+
 export interface MensagemPix {
   endToEndId: string;
   valor: number;
-  pagador: PessoaPix;
-  recebedor: PessoaPix;
+  pagador: PagadorPix;
+  recebedor: RecebedorPix;
   campoLivre: string;
   txId: string;
   dataHoraPagamento: string;
