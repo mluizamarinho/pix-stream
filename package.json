@@ -8,10 +8,11 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate:create": "node-pg-migrate create -m migrations",
-    "migrate": "cross-env node-pg-migrate up -m migrations --ts --tsconfig tsconfig.json",
-    "migrate:down": "cross-env DATABASE_URL=$DATABASE_URL node-pg-migrate down -m migrations --ts --tsconfig tsconfig.json",
-    "migrate:docker": "node-pg-migrate up -m migrations --ts --tsconfig tsconfig.json"
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio",
+    "prisma:dev": "prisma migrate dev --name init",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:reset": "prisma migrate reset"
   },
   "repository": {
     "type": "git",
