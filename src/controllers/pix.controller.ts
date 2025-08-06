@@ -17,8 +17,13 @@ export async function startStream(req: Request, res: Response) {
 
     res.set('Pull-Next', `/api/pix/${ispb}/stream/${interactionId}`);
     return res.status(200).json(mensagens);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erro ao iniciar stream:', error);
+    
+    if (error.statusCode === 429) {
+      return res.status(429).json({ error: 'Limite de streams simultâneas atingido para este ISPB' });
+    }
+
     return res.status(500).json({ error: 'Erro ao iniciar stream' });
   }
 }

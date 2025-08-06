@@ -3,6 +3,17 @@ import { prisma } from '../lib/prisma';
 
 export class PixService {
   async iniciarStream(ispb: string, multiple: boolean) {
+    // Verifica o número de streams ativos para o ISPB
+    const streamsAtivas = await prisma.pixStream.count({
+      where: { ispb },
+    });
+
+    if (streamsAtivas >= 6) {
+      const error: any = new Error('Limite de streams atingido');
+      error.statusCode = 429;
+      throw error;
+    }
+
     const interactionId = uuidv4();
 
     // Busca as primeiras mensagens ordenadas por data
@@ -16,12 +27,11 @@ export class PixService {
       take: multiple ? 10 : 1,
     });
 
-    // Define última data lida (se houver mensagens)
     const ultimaDataLida = mensagens.length > 0
       ? mensagens[mensagens.length - 1].dataHoraPagamento
       : null;
 
-    // Cria stream no banco
+    // Cria nova stream no banco
     await prisma.pixStream.create({
       data: {
         interactionId,
