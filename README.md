@@ -20,6 +20,8 @@ Pix Stream é uma aplicação back-end responsável por gerenciar e distribuir m
 - Prisma ORM
 - Jest (testes)
 - Docker & Docker Compose
+- Beekeeper Studio (Interface gráfica para inspeção e gerenciamento do banco de dados)
+- Insomnia (Testar e documentar endpoints da API)
 ---
 
 ## ⚙️ Como rodar o projeto localmente
