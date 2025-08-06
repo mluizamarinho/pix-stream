@@ -35,6 +35,7 @@ model PixStream {
   interactionId  String
   ispb           String
   lastReadId     String
+  ultimaDataLida  DateTime?
 
   mensagens     MensagemPix[]
 }

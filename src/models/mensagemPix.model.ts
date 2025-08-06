@@ -31,7 +31,7 @@ export async function criarStream(interactionId: string, ispb: string) {
     data: {
       interactionId,
       ispb,
-      lastReadId: 0
+      lastReadId: "0"
     }
   });
 }
@@ -45,7 +45,7 @@ export async function buscarStreamPorId(interactionId: string, ispb: string) {
   });
 }
 
-export async function atualizarProgressoStream(interactionId: string, ispb: string, lastReadId: number) {
+export async function atualizarProgressoStream(interactionId: string, ispb: string, lastReadId: string) {
   await prisma.pixStream.updateMany({
     where: {
       interactionId,
