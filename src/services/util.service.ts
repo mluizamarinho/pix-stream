@@ -13,7 +13,6 @@ export async function geraEInserePixFakeInfo(ispb: string, number: number) {
       pagador: {
         nome: faker.person.fullName(),
         cpfCnpj: faker.string.numeric(11),
-        ispb: faker.string.numeric(8),
         agencia: faker.string.numeric(4),
         contaTransacional: faker.string.numeric(7),
         tipoConta: faker.helpers.arrayElement(['CACC', 'SVGS']),
