@@ -63,7 +63,7 @@ npm run prisma:generate
 ```bash
 npm run dev
 ```
-
+---
 ## 🧪 Rodando os testes
 
 ### 1. Testes unitários com Jest
