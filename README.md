@@ -17,8 +17,9 @@ Pix Stream é uma aplicação back-end responsável por gerenciar e distribuir m
 - TypeScript
 - Express
 - PostgreSQL
-- Docker e Docker Compose
-
+- Prisma ORM
+- Jest (testes)
+- Docker & Docker Compose
 ---
 
 ## ⚙️ Como rodar o projeto localmente
@@ -44,8 +45,31 @@ npm install
 docker-compose up -d
 ```
 
-### 5. Rodando o projeto
+### 5. Gere o Prisma Client
 
 ```bash
+npm run prisma:generate
+```
+
+### 6. Aplique as migrations (estrutura do banco)
+
+```bash
+npm run prisma:generate
+```
+
+### 7. Rode a aplicação
+```bash
 npm run dev
+```
+
+## 🧪 Rodando os testes
+
+### 1. Testes unitários com Jest
+```bash
+npm run test
+```
+
+### 2. Testes em modo observação
+```bash
+npm run test:watch
 ```
