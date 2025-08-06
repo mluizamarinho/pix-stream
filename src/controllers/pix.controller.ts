@@ -6,7 +6,7 @@ const pixService = new PixService();
 export async function startStream(req: Request, res: Response) {
   try {
     const { ispb } = req.params;
-    const accept = req.headers['accept'];
+    const accept = req.header('Accept') || '';
     const multiple = accept === 'multipart/json';
 
     const { interactionId, mensagens } = await pixService.iniciarStream(ispb, multiple);
@@ -15,7 +15,7 @@ export async function startStream(req: Request, res: Response) {
       return res.status(204).send();
     }
 
-    res.setHeader('Pull-Next', `/api/pix/${ispb}/stream/${interactionId}`);
+    res.set('Pull-Next', `/api/pix/${ispb}/stream/${interactionId}`);
     return res.status(200).json(mensagens);
   } catch (error) {
     console.error('Erro ao iniciar stream:', error);
@@ -26,16 +26,19 @@ export async function startStream(req: Request, res: Response) {
 export async function continueStream(req: Request, res: Response) {
   try {
     const { ispb, interactionId } = req.params;
-    const accept = req.headers['accept'];
+    const accept = req.header('Accept') || '';
     const multiple = accept === 'multipart/json';
 
     const { mensagens } = await pixService.continuarStream(ispb, interactionId, multiple);
 
     if (mensagens.length === 0) {
-      return res.status(204).send();
+      return res
+        .status(204)
+        .set('Pull-Next', `/api/pix/${ispb}/stream/${interactionId}`)
+        .send();
     }
 
-    res.setHeader('Pull-Next', `/api/pix/${ispb}/stream/${interactionId}`);
+    res.set('Pull-Next', `/api/pix/${ispb}/stream/${interactionId}`);
     return res.status(200).json(mensagens);
   } catch (error) {
     console.error('Erro ao continuar stream:', error);
@@ -48,7 +51,7 @@ export const deleteStream = async (req: Request, res: Response) => {
 
   try {
     await pixService.encerrarStream(ispb, interactionId);
-    res.status(204).send(); 
+    res.status(204).send();
   } catch (error) {
     console.error('Erro ao encerrar stream:', error);
     res.status(500).json({ error: 'Erro interno ao encerrar o stream' });
