@@ -1,21 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { prisma } from '../lib/prisma';
-import { MensagemPix } from '../schemas/mensagemPix.schema';
 
 export class PixService {
   async iniciarStream(ispb: string, multiple: boolean) {
     const interactionId = uuidv4();
 
-    // Cria o registro da stream no banco
-    await prisma.pixStream.create({
-      data: {
-        interactionId,
-        ispb,
-        lastReadId: "0",
-      },
-    });
-
-    // Busca mensagens Pix a partir do ID 0 (assumindo que id é uma string UUID, ignorar filtro por gt: 0)
+    // Busca as primeiras mensagens ordenadas por data
     const mensagens = await prisma.mensagemPix.findMany({
       where: {
         recebedorIspb: ispb,
@@ -26,18 +16,20 @@ export class PixService {
       take: multiple ? 10 : 1,
     });
 
-    if (mensagens.length > 0) {
-      const lastReadId = mensagens[mensagens.length - 1].id;
-      await prisma.pixStream.updateMany({
-        where: {
-          interactionId,
-          ispb,
-        },
-        data: {
-          lastReadId,
-        },
-      });
-    }
+    // Define última data lida (se houver mensagens)
+    const ultimaDataLida = mensagens.length > 0
+      ? mensagens[mensagens.length - 1].dataHoraPagamento
+      : null;
+
+    // Cria stream no banco
+    await prisma.pixStream.create({
+      data: {
+        interactionId,
+        ispb,
+        lastReadId: mensagens.length > 0 ? mensagens[mensagens.length - 1].id : '',
+        ultimaDataLida,
+      },
+    });
 
     return {
       interactionId,
@@ -57,11 +49,12 @@ export class PixService {
       throw new Error('Stream não encontrada');
     }
 
+    // Busca mensagens após a última data lida
     const mensagens = await prisma.mensagemPix.findMany({
       where: {
         recebedorIspb: ispb,
-        id: {
-          gt: stream.lastReadId,
+        dataHoraPagamento: {
+          gt: stream.ultimaDataLida ?? new Date(0),
         },
       },
       orderBy: {
@@ -70,8 +63,11 @@ export class PixService {
       take: multiple ? 10 : 1,
     });
 
+    // Atualiza posição da stream, se houver mensagens novas
     if (mensagens.length > 0) {
+      const ultimaDataLida = mensagens[mensagens.length - 1].dataHoraPagamento;
       const lastReadId = mensagens[mensagens.length - 1].id;
+
       await prisma.pixStream.updateMany({
         where: {
           interactionId,
@@ -79,6 +75,7 @@ export class PixService {
         },
         data: {
           lastReadId,
+          ultimaDataLida,
         },
       });
     }
